@@ -41,7 +41,7 @@ class PrimaryButtonOutlined extends StatelessWidget {
           minimumSize: const Size.fromHeight(52),
           side: BorderSide(color: borderColor, width: 1),
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         child: SizedBox(
             height: 24,
@@ -60,7 +60,7 @@ class PrimaryButtonOutlined extends StatelessWidget {
           minimumSize: const Size.fromHeight(52),
           side: BorderSide(color: borderColor, width: 1),
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         child: Text(
           text,
@@ -71,12 +71,15 @@ class PrimaryButtonOutlined extends StatelessWidget {
     }
   }
 
-  static PrimaryButtonOutlined redButton({Function? onTap, required String text, bool showProgress = false}) {
+  static PrimaryButtonOutlined redButton(
+      {Function? onTap, required String text, bool showProgress = false}) {
     return PrimaryButtonOutlined(
         text: text,
         borderColor: alertRedLight,
         showProgress: showProgress,
         textColor: alertRedLight,
-        onTap: (){onTap?.call();});
+        onTap: () {
+          onTap?.call();
+        });
   }
 }
