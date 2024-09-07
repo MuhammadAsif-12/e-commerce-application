@@ -46,7 +46,6 @@ dependencies:
   flutter_svg: ^2.0.10+1
   copy_with_extension: ^5.0.4
   marquee: ^2.2.3
-  dartz: ^0.10.1
 
 
 dev_dependencies:
