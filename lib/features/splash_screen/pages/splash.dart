@@ -21,6 +21,7 @@ class SplashPage extends StatelessWidget {
               context, MaterialPageRoute(builder: (context) => SignInPage()));
         }
       },
+
       child: Scaffold(
         backgroundColor: primary,
         body: Center(
