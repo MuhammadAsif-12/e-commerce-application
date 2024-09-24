@@ -13,13 +13,12 @@ class Ages extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
         height: MediaQuery.of(context).size.height / 2.7,
-        child: BlocBuilder<AgesDisplayCubit,AgesDisplayState>(
+        child: BlocBuilder<AgesDisplayCubit, AgesDisplayState>(
           builder: (context, state) {
             if (state is AgesLoading) {
               return Container(
                   alignment: Alignment.center,
-                  child: const CircularProgressIndicator()
-              );
+                  child: const CircularProgressIndicator());
             }
 
             if (state is AgesLoaded) {
@@ -29,39 +28,35 @@ class Ages extends StatelessWidget {
             if (state is AgesLoadFailure) {
               return Container(
                 alignment: Alignment.center,
-                child: Text(
-                    state.message
-                ),
+                child: Text(state.message),
               );
             }
 
             return const SizedBox();
           },
-        )
-    );
+        ));
   }
 
   Widget _ages(List<QueryDocumentSnapshot<Map<String, dynamic>>> ages) {
     return ListView.separated(
         padding: const EdgeInsets.all(16),
-        itemBuilder: (context,index) {
+        itemBuilder: (context, index) {
           return GestureDetector(
-            onTap: (){
+            onTap: () {
               Navigator.pop(context);
               context.read<AgeSelectionCubit>().selectAge(
-                ages[index].data()['value'],
-              );
+                    ages[index].data()['value'],
+                  );
             },
             child: Text(
               ages[index].data()['value'],
-              style: const TextStyle(
-                  fontSize: 18
-              ),
+              style: const TextStyle(fontSize: 18),
             ),
           );
         },
-        separatorBuilder: (context,index) => const SizedBox(height: 20,),
-        itemCount: ages.length
-    );
+        separatorBuilder: (context, index) => const SizedBox(
+              height: 20,
+            ),
+        itemCount: ages.length);
   }
 }

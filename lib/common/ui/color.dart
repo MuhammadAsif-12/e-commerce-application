@@ -16,3 +16,4 @@ Color alertRedLight = const Color(0xFFFF7D75);
 const Color primary = Color(0xff8E6CEF);
 const Color background = Color(0xff1D182A);
 const Color secondBackground = Color(0xff342F3F);
+const Color boxColor = Color(0xffC2C3CE);
