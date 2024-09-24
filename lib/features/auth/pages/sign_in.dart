@@ -5,6 +5,7 @@ import 'package:shopping_store/common/ui/custom_app_bar.dart';
 import 'package:shopping_store/common/ui/custom_button.dart';
 import 'package:shopping_store/common/ui/custom_button_outlined.dart';
 import 'package:shopping_store/common/ui/text.dart';
+import 'package:shopping_store/features/auth/data/models/user_signin_req.dart';
 import 'package:shopping_store/features/auth/pages/enter_password.dart';
 import 'package:shopping_store/features/auth/pages/signup.dart';
 
@@ -16,7 +17,6 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       backgroundColor: appBackGround,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 120),
@@ -31,7 +31,7 @@ class SignInPage extends StatelessWidget {
             const SizedBox(
               height: 24,
             ),
-            _continueButton(context),
+            _continueButton(context, _emailCon),
             const SizedBox(
               height: 24,
             ),
@@ -62,12 +62,18 @@ Widget _emailField(BuildContext context, TextEditingController controller) {
   );
 }
 
-Widget _continueButton(BuildContext context) {
+Widget _continueButton(BuildContext context, TextEditingController emailCon) {
   return PrimaryButton(
     text: "Continue",
     onTap: () {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => EnterPasswordPage()));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EnterPasswordPage(
+                    signInReq: UserSigninReq(
+                      email: emailCon.text,
+                    ),
+                  )));
     },
     backgroundColor: primary,
     textColor: Colors.white,
@@ -76,7 +82,7 @@ Widget _continueButton(BuildContext context) {
 
 Widget _createAccount(BuildContext context) {
   return RichText(
-    text:  TextSpan(children: [
+    text: TextSpan(children: [
       TextSpan(
           text: "  Don't you have an account? ",
           style: TextStyle(color: colorD2C)),

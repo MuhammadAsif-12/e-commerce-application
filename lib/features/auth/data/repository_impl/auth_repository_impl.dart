@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:shopping_store/dependency_injection.dart';
 import 'package:shopping_store/features/auth/data/data_source/auth_firebase_service.dart';
 import 'package:shopping_store/features/auth/data/models/user_creation_request.dart';
+import 'package:shopping_store/features/auth/data/models/user_signin_req.dart';
 import 'package:shopping_store/features/auth/domain/repository/auth_repository.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
@@ -13,5 +14,10 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<Either> getAges() async {
     return await sl<AuthFirebaseService>().getAges();
+  }
+
+  @override
+  Future<Either> signin(UserSigninReq user) async {
+    return await sl<AuthFirebaseService>().signin(user);
   }
 }
