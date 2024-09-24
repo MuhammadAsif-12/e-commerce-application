@@ -1,54 +1,80 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopping_store/common/bloc/button_cubit.dart';
+import 'package:shopping_store/common/bloc/button_state.dart';
 import 'package:shopping_store/common/bottomsheet/app_bottomsheet.dart';
+import 'package:shopping_store/common/ui/basic_reactive_button.dart';
 import 'package:shopping_store/common/ui/color.dart';
 import 'package:shopping_store/common/ui/custom_app_bar.dart';
-import 'package:shopping_store/common/ui/custom_button.dart';
-import 'package:shopping_store/common/ui/custom_button_outlined.dart';
 import 'package:shopping_store/common/ui/text.dart';
 import 'package:shopping_store/features/auth/bloc/age_display/age_display_cubit.dart';
 import 'package:shopping_store/features/auth/bloc/age_selection_cubit.dart';
+import 'package:shopping_store/features/auth/data/models/user_creation_request.dart';
+import 'package:shopping_store/features/auth/domain/usecase/sign_up.dart';
+import 'package:shopping_store/features/auth/pages/sign_in.dart';
+import 'package:shopping_store/features/auth/pages/signup.dart';
 import 'package:shopping_store/features/auth/widget/ages.dart';
 import 'package:shopping_store/features/auth/bloc/gender_selection_cubit.dart';
 
 class GenderAndAgeSelectionPage extends StatelessWidget {
-  const GenderAndAgeSelectionPage({super.key});
+  final UserCreationReq userCreationReq;
+  const GenderAndAgeSelectionPage({super.key, required this.userCreationReq});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PrimaryAppBar(
         title: "",
-        onBackPressed: null,
+        onBackPressed: () {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => SignUpPage()));
+        },
       ),
       backgroundColor: appBackGround,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _tellUs(context),
-                const SizedBox(
-                  height: 30,
-                ),
-                _genders(context),
-                const SizedBox(
-                  height: 30,
-                ),
-                _howOld(context),
-                const SizedBox(
-                  height: 30,
-                ),
-                _age(),
-              ],
-            ),
-          ),
-          const Spacer(),
-          _finishButton(context)
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => GenderSelectionCubit()),
+          BlocProvider(create: (context) => AgeSelectionCubit()),
+          BlocProvider(create: (context) => AgesDisplayCubit()),
+          BlocProvider(create: (context) => ButtonStateCubit()),
         ],
+        child: BlocListener<ButtonStateCubit,ButtonState>(
+          listener: (context, state) {
+            if (state is ButtonFailureState){
+              var snackbar = SnackBar(content: Text(state.errorMessage),behavior: SnackBarBehavior.floating,);
+              ScaffoldMessenger.of(context).showSnackBar(snackbar);
+            }
+          },
+          child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _tellUs(context),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    _genders(context),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    _howOld(context),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    _age(),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              _finishButton(context, userCreationReq),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -69,15 +95,6 @@ Widget _howOld(BuildContext context) {
     size: 18,
     fontWeight: FontWeight.w600,
     textColor: colorD2C,
-  );
-}
-
-Widget _finishButton(BuildContext context) {
-  return PrimaryButton(
-    text: "Finish",
-    onTap: () {},
-    backgroundColor: primary,
-    textColor: Colors.white,
   );
 }
 
@@ -109,12 +126,12 @@ Expanded genderTile(BuildContext context, int genderIndex, String gender) {
             color: context.read<GenderSelectionCubit>().selectedIndex ==
                     genderIndex
                 ? primary
-                : secondBackground,
+                : boxColor,
             borderRadius: BorderRadius.circular(30)),
         child: Center(
           child: Text(
             gender,
-            style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
           ),
         ),
       ),
@@ -126,7 +143,7 @@ Widget _age() {
   return BlocBuilder<AgeSelectionCubit, String>(builder: (context, state) {
     return GestureDetector(
       onTap: () {
-          AppBottomsheet.display(
+        AppBottomsheet.display(
             context,
             MultiBlocProvider(providers: [
               BlocProvider.value(
@@ -140,7 +157,7 @@ Widget _age() {
         height: 60,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-            color: secondBackground, borderRadius: BorderRadius.circular(30)),
+            color: boxColor, borderRadius: BorderRadius.circular(30)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [Text(state), const Icon(Icons.keyboard_arrow_down)],
@@ -148,4 +165,32 @@ Widget _age() {
       ),
     );
   });
+}
+
+Widget _finishButton(BuildContext context, UserCreationReq userCreationReq) {
+  return Container(
+    height: 100,
+    color: appBackGround,
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: Center(
+      child: Builder(
+        builder: (context) {
+          return BasicReactiveButton(
+            onPressed: () {
+              // Access userCreationReq from the current class context
+              userCreationReq.gender =
+                  context.read<GenderSelectionCubit>().selectedIndex;
+              userCreationReq.age =
+                  context.read<AgeSelectionCubit>().selectedAge;
+              context.read<ButtonStateCubit>().execute(
+                    usecase: SignupUseCase(),
+                    params: userCreationReq,
+                  );
+            },
+            title: 'Finish',
+          );
+        },
+      ),
+    ),
+  );
 }

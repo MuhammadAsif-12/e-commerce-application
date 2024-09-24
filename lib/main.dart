@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping_store/config/theme/app_theme.dart';
+import 'package:shopping_store/dependency_injection.dart';
 import 'package:shopping_store/features/splash_screen/bloc/splash_screen_cubit.dart';
 import 'package:shopping_store/features/splash_screen/pages/splash.dart';
 
@@ -12,6 +13,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform
   );
+  await initializeDependencies();
   runApp(const MyApp());
 }
 

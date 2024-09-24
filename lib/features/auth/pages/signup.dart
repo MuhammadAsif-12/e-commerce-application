@@ -5,6 +5,8 @@ import 'package:shopping_store/common/ui/color.dart';
 import 'package:shopping_store/common/ui/custom_app_bar.dart';
 import 'package:shopping_store/common/ui/custom_button.dart';
 import 'package:shopping_store/common/ui/text.dart';
+import 'package:shopping_store/features/auth/data/models/user_creation_request.dart';
+import 'package:shopping_store/features/auth/pages/gender_age.dart';
 import 'package:shopping_store/features/auth/pages/sign_in.dart';
 
 class SignUpPage extends StatelessWidget {
@@ -28,35 +30,38 @@ class SignUpPage extends StatelessWidget {
       backgroundColor: appBackGround,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 35),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _siginText(context),
-            const SizedBox(
-              height: 24,
-            ),
-            _firstNameField(_firstNameCon),
-            const SizedBox(
-              height: 24,
-            ),
-            _lastNameField(_lastNameCon),
-            const SizedBox(
-              height: 24,
-            ),
-            _emailField(context, _emailCon),
-            const SizedBox(
-              height: 24,
-            ),
-            _passwordField(context, _passwordCon),
-            const SizedBox(
-              height: 24,
-            ),
-            _continueButton(context),
-            const SizedBox(
-              height: 24,
-            ),
-            _createAccount(context)
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _siginText(context),
+              const SizedBox(
+                height: 24,
+              ),
+              _firstNameField(_firstNameCon),
+              const SizedBox(
+                height: 24,
+              ),
+              _lastNameField(_lastNameCon),
+              const SizedBox(
+                height: 24,
+              ),
+              _emailField(context, _emailCon),
+              const SizedBox(
+                height: 24,
+              ),
+              _passwordField(context, _passwordCon),
+              const SizedBox(
+                height: 24,
+              ),
+              _continueButton(
+                  context, _firstNameCon, _lastNameCon, _emailCon, _passwordCon),
+              const SizedBox(
+                height: 24,
+              ),
+              _createAccount(context)
+            ],
+          ),
         ),
       ),
     );
@@ -75,16 +80,20 @@ Widget _siginText(BuildContext context) {
 Widget _firstNameField(TextEditingController controller) {
   return TextField(
     controller: controller,
-    decoration: const InputDecoration(hintText: 'Firstname',
-      fillColor: Colors.white,),
+    decoration: const InputDecoration(
+      hintText: 'Firstname',
+      fillColor: Colors.white,
+    ),
   );
 }
 
 Widget _lastNameField(TextEditingController controller) {
   return TextField(
     controller: controller,
-    decoration: const InputDecoration(hintText: 'Lastname',
-      fillColor: Colors.white,),
+    decoration: const InputDecoration(
+      hintText: 'Lastname',
+      fillColor: Colors.white,
+    ),
   );
 }
 
@@ -108,10 +117,29 @@ Widget _passwordField(BuildContext context, TextEditingController controller) {
   );
 }
 
-Widget _continueButton(BuildContext context) {
+Widget _continueButton(
+    BuildContext context,
+    TextEditingController firstNameCon,
+    TextEditingController lastNameCon,
+    TextEditingController emailCon,
+    TextEditingController passwordCon) {
   return PrimaryButton(
     text: "Continue",
-    onTap: () {},
+    onTap: () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GenderAndAgeSelectionPage(
+            userCreationReq: UserCreationReq(
+              firstName: firstNameCon.text,
+              email: emailCon.text,
+              lastName: lastNameCon.text,
+              password: passwordCon.text,
+            ),
+          ),
+        ),
+      );
+    },
     backgroundColor: primary,
     textColor: Colors.white,
   );
@@ -119,17 +147,17 @@ Widget _continueButton(BuildContext context) {
 
 Widget _createAccount(BuildContext context) {
   return RichText(
-    text:  TextSpan(children: [
+    text: TextSpan(children: [
       TextSpan(
           text: "  Don't you have an account? ",
           style: TextStyle(color: colorD2C)),
       TextSpan(
           text: '  SIgn In',
           recognizer: TapGestureRecognizer()
-        ..onTap = () {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => SignInPage()));
-        },
+            ..onTap = () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SignInPage()));
+            },
           style: TextStyle(fontWeight: FontWeight.bold, color: colorD2C))
     ]),
   );
